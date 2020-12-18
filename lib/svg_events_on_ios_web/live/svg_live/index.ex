@@ -1,46 +1,39 @@
 defmodule SvgEventsOnIosWeb.SvgLive.Index do
   use SvgEventsOnIosWeb, :live_view
 
-  alias SvgEventsOnIos.Demo
-  alias SvgEventsOnIos.Demo.Svg
-
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :svgs, list_svgs())}
+    {:ok, socket
+      |> assign(:color, "pink")
+    }
   end
 
   @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-  end
-
-  defp apply_action(socket, :edit, %{"id" => id}) do
-    socket
-    |> assign(:page_title, "Edit Svg")
-    |> assign(:svg, Demo.get_svg!(id))
-  end
-
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New Svg")
-    |> assign(:svg, %Svg{})
-  end
-
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, "Listing Svgs")
-    |> assign(:svg, nil)
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
   end
 
   @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    svg = Demo.get_svg!(id)
-    {:ok, _} = Demo.delete_svg(svg)
-
-    {:noreply, assign(socket, :svgs, list_svgs())}
+  def handle_event("click_happened", _, socket) do
+    {:noreply, socket
+      |> assign(:color, "green")
+    }
   end
 
-  defp list_svgs do
-    Demo.list_svgs()
+  @impl true
+  def render(assigns) do
+    ~L"""
+    <h1>SVG Click Demo of IOS bug.</h1>
+
+    <p>This works fine in the browser, but click (press) events are not triggered on IOS.  Tested against simulator, and hardware</p>
+
+    <svg height="250" width="500">
+      <polygon 
+        phx-click="click_happened"
+        points="220,10 300,210 170,250 123,234" 
+        style="fill:<%= @color %>;stroke:purple;stroke-width:1" 
+      />
+    </svg>
+    """
   end
 end
