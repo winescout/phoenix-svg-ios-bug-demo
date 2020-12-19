@@ -9,11 +9,6 @@ defmodule SvgEventsOnIosWeb.SvgLive.Index do
   end
 
   @impl true
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_event("click_happened", _, socket) do
     {:noreply, socket
       |> assign(:color, "green")
